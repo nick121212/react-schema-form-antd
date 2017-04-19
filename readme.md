@@ -14,9 +14,12 @@ SchemaForm通过约定的语法规则来生成配置。你可以使用的默认�
 ### *SchemaForm*
 1. 使用antd中的组件来组合表单。
 2. 使用tv4来做验证，兼容第四版本的JSONSCHEMA。
-3. 使用eventemmiter2来触发事件。
+3. 使用EventEmitter2来触发事件(数据更改，数据验证等)。
 
 ## 文档
+
+1. [JsonSchema规范](http://json-schema.org/)
+2. [参数以及配置文档](https://github.com/nick121212/react-schema-form-antd/docs/index.md)
 
 ## 基础用法
 第一步，请先定义JsonSchema：
@@ -124,13 +127,19 @@ var uiSchema = ["name",
 npm install react-schema-form-antd --save
 ```
 
+## 如何启动
+```
+webpack-dev-server
+```
+直接访问[http://localhost:8081/](http://localhost:8081/)查看效果
+
 ## 依赖
 1. [react](https://github.com/facebook/react)
 2. [antd](https://github.com/ant-design/ant-design)
 3. [tv4](https://github.com/geraintluff/tv4)
 4. [tv4-formats](https://github.com/ikr/tv4-formats)
 5. [validator](https://github.com/chriso/validator.js)
-6. [eventemmiter2](https://github.com/asyncly/EventEmitter2)
+6. [EventEmitter2](https://github.com/asyncly/EventEmitter2)
 7. [json-pointer](https://github.com/manuelstofer/json-pointer)
 
 ## License
