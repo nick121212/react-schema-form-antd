@@ -23,7 +23,9 @@ export class DefaultTemp extends BaseTemp<IProps, any>{
         return (
             <span>
                 {children}
-                {invalid && dirty && error.message + this.getKey()}
+                <div>
+                    {invalid && dirty && error.message + this.getKey()}
+                </div>
             </span>
         );
     }

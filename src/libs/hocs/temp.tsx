@@ -9,7 +9,7 @@ import { HocBase } from './base';
  * @param Component 需要包装的组件
  * @param options   参数
  */
-export const TempHoc = (Component: any, options = {}) => {
+export const TempHoc = (Component: any): React.ComponentClass<any> => {
     return class Hoc extends HocBase<any, any> {
 
         constructor(props, content) {
@@ -18,7 +18,7 @@ export const TempHoc = (Component: any, options = {}) => {
 
         render() {
             const { uiSchema, ...extra } = this.props;
-            const TempComponents = utils.getTemplate(uiSchema);
+            const TempComponents = utils.getTemplate(uiSchema, extra.globalOptions);
 
             // 获取temp组件，遍历组合
             return TempComponents.reduce((prev, CurComponent) => {

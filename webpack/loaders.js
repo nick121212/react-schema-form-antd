@@ -38,8 +38,6 @@ exports.html = {
 
 exports.css = {
     test: /\.css$/,
-    // loader: 'style-loader!css-loader?-minimize!modules!postcss-loader',
-    exclude: /node_modules/,
     use: [{
         loader: 'style-loader',
     }, {
@@ -65,7 +63,7 @@ exports.scss = {
     })
 };
 
-exports.js = { test: /\.js$/, exclude: /node_modules/, loader: 'babel' };
+exports.js = { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' };
 
 exports.json = {
     test: /\.json$/,

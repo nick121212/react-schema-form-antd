@@ -1,4 +1,4 @@
-import { fieldFactory, tempFactory, widgetFactory } from './utils';
+import { fieldFactory, tempFactory, widgetFactory, utils } from './utils';
 import { ObjectField } from './libs/fields/object';
 import { StringField } from './libs/fields/string';
 import { NumberField } from './libs/fields/number';
@@ -22,6 +22,12 @@ import { StepsWidget } from './libs/widgets/steps';
 
 import { SchemaForm } from './libs/form';
 import { CardTemp } from './libs/temps/card';
+import { IUiSchema } from './libs/props/uischema';
+import { BaseWidget } from './libs/widgets/base';
+import { BaseField } from './libs/fields/base';
+import { BaseTemp } from './libs/temps/base';
+import { BaseFactory } from './libs/base.factory';
+import { ICommonChildProps } from "./libs/props/common";
 
 fieldFactory.add("object", ObjectField as any);
 fieldFactory.add("string", StringField as any);
@@ -48,4 +54,6 @@ widgetFactory.add("autocomplete", AutoCompleteWidget as any);
 widgetFactory.add("tree", TreeWidget as any);
 widgetFactory.add("steps", StepsWidget as any);
 
-export { SchemaForm, fieldFactory, tempFactory, widgetFactory };
+export {
+    SchemaForm, fieldFactory, tempFactory, widgetFactory, IUiSchema, BaseWidget, BaseField, BaseTemp, BaseFactory, utils, ICommonChildProps
+};

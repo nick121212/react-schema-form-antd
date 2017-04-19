@@ -43,7 +43,7 @@ export interface IOptions {
  * @param schema 
  * @param options 
  */
-export const stdFormObj = (name: string, schema: MyJsonSchema, options: IOptions): MyJsonSchema => {
+export const stdFormObj = (name: string, schema: MyJsonSchema, options: IOptions) => {
     options = options || {};
 
     // The Object.assign used to be a angular.copy. Should work though.

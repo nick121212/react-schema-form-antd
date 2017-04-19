@@ -8,6 +8,7 @@ import * as jpp from 'json-pointer';
 import { validate } from './libs/validate';
 import { ConditionHoc } from './libs/hocs/condition';
 import { TempHoc } from './libs/hocs/temp';
+import { TriggerHoc } from './libs/hocs/trigger';
 
 export class Utils {
     /**
@@ -16,21 +17,31 @@ export class Utils {
      */
     getField(uiSchema: IUiSchema): any {
         let FieldTemp = fieldFactory.get(uiSchema["ui:field"] || uiSchema.type || (uiSchema.schema ? uiSchema.schema.type : ""));
+        let hoc = uiSchema["ui:hoc"];
 
         if (!FieldTemp) {
             console.log(uiSchema, "找不到Field");
         }
 
-        return FieldTemp ? ConditionHoc(TempHoc(FieldTemp)) : FieldTemp;
+        if (!hoc) {
+            hoc = {
+                hoc: (Component, fn) => {
+                    return Component;
+                },
+                params: {}
+            };
+        }
+
+        return FieldTemp ? hoc.hoc(TriggerHoc(ConditionHoc(TempHoc(FieldTemp))), hoc.params || {}) : FieldTemp;
     }
 
     /**
      * 获取模板的components
      * @param uiSchema 合并后的数据
      */
-    getTemplate(uiSchema: IUiSchema): Array<any> {
+    getTemplate(uiSchema: IUiSchema, globalOptions: any = {}): Array<any> {
         let TempComponent = [];
-        let template = uiSchema["ui:temp"] || "default";
+        let template = uiSchema["ui:temp"] || globalOptions["ui:temp"] || "default";
 
         // 获取模板的数据，单个模板
         if (typeof template === "string") {

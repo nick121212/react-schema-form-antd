@@ -92,3 +92,5 @@ export class SchemaFormBase<P extends ICommonChildProps, S> extends React.Compon
         return utils.compileKeys({ uiSchema, arrayIndex });
     }
 }
+
+new SchemaFormBase(null,null);

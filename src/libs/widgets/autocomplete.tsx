@@ -11,6 +11,8 @@ export interface IProps extends ICommonChildProps {
 }
 
 export class AutoCompleteWidget extends BaseWidget<IProps, any> {
+    private timeId: number;
+
     constructor(props, context) {
         super(props, context);
     }
@@ -38,32 +40,41 @@ export class AutoCompleteWidget extends BaseWidget<IProps, any> {
     handleChange(value: string) {
         const { uiSchema, arrayIndex } = this.props;
         const keys = utils.mergeKeys({ uiSchema, arrayIndex });
+        const { text = undefined } = this.state;
 
-        uiSchema["ui:trigger"] && uiSchema["ui:trigger"](value).then((dataSource) => {
-            this.setState({
-                dataSource: dataSource,
-                text: value
-            });
-        });
+        if (text != value && value != this.getFieldValue()) {
+            this.timeId && clearTimeout(this.timeId);
+            this.timeId = setTimeout(() => {
+                uiSchema["ui:trigger"] && uiSchema["ui:trigger"](value).then((dataSource) => {
+                    this.setState({
+                        dataSource: dataSource,
+                        text: value
+                    });
+                });
+            }, 300);
+        }
+    }
 
+    onSelect(value) {
+        const { uiSchema, children, globalOptions, arrayIndex, schemaForm, onChange, defaultValue, formEvent, form, ...extra } = this.props;
+        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
+
+        this.triggerEvent(["change"].concat(keys), keys, value, uiSchema);
     }
 
     render() {
         const { uiSchema, children, globalOptions, arrayIndex, schemaForm, onChange, defaultValue, formEvent, form, ...extra } = this.props;
         const options = uiSchema["ui:options"] || {}, { autocomplete = {} } = options.widget || {};
-        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
         const { dataSource = [] } = this.state || {};
 
         return (
             <AutoComplete
                 disabled={(uiSchema as IUiSchema).readonly}
                 placeholder={(uiSchema as tv4.JsonSchema).title}
-                onSelect={(value) => this.triggerEvent(["change"].concat(keys), keys, value, uiSchema)}
+                onSelect={this.onSelect.bind(this)}
                 onChange={this.handleChange.bind(this)}
-                optionLabelProp="value"
                 dataSource={dataSource}
-                {...autocomplete}
-                {...this.setDefaultProps() }>
+                {...autocomplete}>
                 <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>
         );

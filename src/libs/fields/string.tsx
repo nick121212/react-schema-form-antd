@@ -15,7 +15,7 @@ export class StringField extends BaseField<IProps, any> {
     render() {
         const { schema, uiSchema, ...extra } = this.props;
         const WidgetComponent: any = utils.getWidget(uiSchema);
-        const value = this.getFieldValue();
+        // const value = this.getFieldValue();
 
         return (
             <WidgetComponent schema={schema} uiSchema={uiSchema} {...extra} />

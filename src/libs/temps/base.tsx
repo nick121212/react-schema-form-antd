@@ -29,6 +29,13 @@ export abstract class BaseTemp<P extends ICommonChildProps, T> extends SchemaFor
         formEvent.on(["setValidator"].concat(keys), this.onValidatorEvent);
     }
 
+    componentWillUnmount() {
+        const { uiSchema, formEvent, arrayIndex } = this.props;
+        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
+
+        formEvent.off(["setValidator"].concat(keys).join('.'), this.onValidatorEvent);
+    }
+
     getErrorInfo() {
         const { uiSchema, children, arrayIndex, globalOptions = {}, validateResult } = this.props;
         const options = uiSchema["ui:options"] || {};
@@ -44,10 +51,4 @@ export abstract class BaseTemp<P extends ICommonChildProps, T> extends SchemaFor
         return { dirty, invalid, error };
     }
 
-    componentWillUnmount() {
-        const { uiSchema, formEvent, arrayIndex } = this.props;
-        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
-
-        formEvent.off(["setValidator"].concat(keys).join('.'), this.onValidatorEvent);
-    }
 }

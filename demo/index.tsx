@@ -1,189 +1,110 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import { SchemaForm } from '../src/index';
-const formData = { username: "nick", password: "111111", shipping_address: [], test: false };
-const schema = {
-    "$schema": "http://json-schema.org/react-schema-form-antd/schema#",
-    "definitions": {
-        "address": {
-            "type": "object",
-            "properties": {
-                "street_address": { "type": "string" },
-                "city": { "type": "string" },
-                "state": { "type": "string" }
-            },
-            "required": ["street_address", "city", "state"]
-        }
-    },
 
-    "title": "用户登录",
-    "type": "object",
-    "required": ["username", "password"],
-    "properties": {
-        "address1": { "$ref": "#/definitions/address" },
-        "username": {
-            "type": "string",
-            "title": "用户名",
-            "minLength": 5,
-            "description": "请使用公司邮箱进行登录"
-        },
-        "password": {
-            "type": "string",
-            "title": "密码"
-        },
-        "names": {
-            "type": "array",
-            "title": "名称",
-            "items": {
-                "type": "string",
-                "title": "名称"
-            }
-        },
-        "roles": {
-            "type": "array",
-            "title": "权限",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "title": "权限名称"
-                    },
-                    "isUsed": {
-                        "type": "boolean",
-                        "title": "是否启用"
-                    },
-                    "test": {
-                        "type": "array",
-                        "title": "测试",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "test1": {
-                                    "type": "string"
-                                },
-                                "test2": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+import 'antd/dist/antd.css';
+
+const formData = {
+    publish_policy: ["1"]
 };
-const uiSchema = [{
-    "ui:temp": "card",
-    "title": "测试",
-    "ui:options": {
-        "card": { "bordered": false }
-    },
-    "items": [{
-        "key": "shipping_address",
-        "items": [{
-            "key": "shipping_address/city",
-            "ui:temp": ["formitem"],
-            "ui:widget": "input"
-        }, {
-            "key": "shipping_address/street_address"
-        }, {
-            "key": "shipping_address/state"
-        }, {
-            "key": "shipping_address/address",
-            "ui:options": {
-                "card": { "bordered": false }
+let a = {
+    schema: {
+        "type": "object",
+        "required": ["name", "rollback_flow"],
+        "properties": {
+            "trigger_day": {
+                "type": "number"
             },
-        }]
-    }]
-}];
-const schema1 = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "definitions": {
-        "address": {
-            "type": "object",
-            "title": "地址",
-            "x-schema-form": {
-                "ui:options": {
-                    "card": { "bordered": false }
-                },
+            "trigger_time": {
+                "type": "string"
             },
-            "properties": {
-                "street_address": {
-                    "type": "string",
-                    "x-schema-form": {
-                        "ui:temp": ["formitem"]
-                    }
-                },
-                "city": {
-                    "type": "string",
-                    "x-schema-form": {
-                        "ui:condition": "",
-                        "ui:temp": ["formitem"]
-                    }
-                },
-                "state": {
-                    "type": "string",
-                    "x-schema-form": {
-                        "ui:temp": ["formitem"]
-                    }
-                },
-                "subAaddress": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/address"
-                    }
+            "name": {
+                "type": "string"
+            },
+            "flows": {
+                "type": "array",
+                "items": {
+                    "type": "string"
                 }
             },
-            "required": ["street_address", "city", "state"]
+            "trigger_mode": {
+                "type": "number",
+                "enum": [0, 1, 2, 3, 4]
+
+            },
+            "rollback_flow": {
+                "type": "number"
+            }
         }
     },
-    "type": "object",
-    "required": [],
-    "properties": {
-        "shipping_address": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/address"
-            }
-        },
-        "names": {
-            "type": "array",
-            "title": "名称",
-            "required": ["names"],
-            "items": {
-                "type": "string",
-                "title": "名称"
-            }
-        },
-    }
-};
-const ddd = [{
-    "ui:temp": "card",
-    "title": "测试",
-    "ui:options": {
-        "card": { "bordered": false }
-    },
-    "items": [{
-        "key": "shipping_address",
-        "items": [{
-            "key": "shipping_address/",
-            "items": [{
-                "key": "shipping_address//city"
-            }, {
-                "key": "shipping_address//street_address"
-            }, {
-                "key": "shipping_address//state"
-            }]
-        }]
+    uiSchema: ["name", {
+        "key": "trigger_mode",
+        "ui:widget": "number",
+        "titleMap": [
+            { label: "立即执行", value: 0 },
+            { label: "定时执行", value: 1 },
+            { label: "每天执行", value: 2 },
+            { label: "每周执行", value: 3 },
+            { label: "每月执行", value: 4 }
+        ],
+
     }, {
-        "key": "names",
-        "items": [{
-            "key": "names/",
-            "ui:temp": ["default"],
-        }]
-    }]
-}];
+            "key": "trigger_day",
+            "ui:condition": {
+                "key": "/trigger_mode",
+                "opt": "eqeqeq",
+                "value": 3
+            },
+            "ui:options": {
+                "widget": {
+                    "inputnumber": {
+                        "min": 1,
+                        "max": 7
+                    }
+                }
+            }
+        }, {
+            "key": "trigger_day",
+            "ui:condition": {
+                "key": "/trigger_mode",
+                "opt": "eq",
+                "value": 4
+            },
+            "ui:options": {
+                "widget": {
+                    "inputnumber": {
+                        "min": 1,
+                        "max": 28
+                    }
+                }
+            }
+        }, {
+            "key": "trigger_time",
+            "ui:widget": "datepicker",
+            "ui:condition": {
+                "key": "/trigger_mode",
+                "opt": "eq",
+                "value": 0
+            },
+        }, {
+            "key": "flows"
+        }, {
+            "key": "rollback_flow"
+        }],
+    globalOptions: {
+        "ui:temp": "formitem",
+        "formItem": {
+            "labelCol": {
+                "xs": { "span": 24 },
+                "sm": { "span": 6 },
+            },
+            "wrapperCol": {
+                "xs": { "span": 24 },
+                "sm": { "span": 14 },
+            }
+        }
+    }
+};
 
 const onChange = (keys: Array<string>, data: any) => {
     console.group();
@@ -257,9 +178,12 @@ function onSubmit(data) {
 
 render(
     <div>
-        <AntSchemaForm onSubmit={onSubmit} schema={schema1} uiSchema={ddd} formData={formData} onChange={onChange} >
+        <AntSchemaForm onSubmit={onSubmit} schema={a.schema} uiSchema={a.uiSchema} globalOptions={a.globalOptions} formData={formData} onChange={onChange} >
             <Button type="primary" htmlType="submit">确定</Button>
         </AntSchemaForm>
     </div>,
-    document.getElementById('root')
+    document.getElementById('root'),
+    () => {
+
+    }
 );

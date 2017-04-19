@@ -85,7 +85,7 @@ export class SchemaForm extends React.Component<IProps, any> {
 
             this.valid = this.valid && validateResult.valid;
 
-            if(!validateResult.valid){
+            if (!validateResult.valid) {
                 console.log(validateResult);
             }
             // 触发validator事件
@@ -122,16 +122,26 @@ export class SchemaForm extends React.Component<IProps, any> {
      * HOC，用于包裹schemaform组件
      * @param Componment 组件
      */
-    static create(Componment) {
+    static create(Componment): React.ComponentClass<any> {
+        let count = 0;
+
         return class SchemaFormHoc extends React.Component<any, any> {
             private schemaForm: SchemaForm;
+            private key: string;
+
+            componentWillMount() {
+                this.key = "schemaForm-" + count++;
+            }
 
             proc(method) {
-                if (!this.schemaForm) {
+                let schemaForm = this.refs[this.key];
+
+                if (!schemaForm) {
                     throw new Error("没有找到SchemaForm");
                 }
 
-                return this.schemaForm[method].call(this.schemaForm);
+                return schemaForm[method].call(schemaForm);
+                // return this.schemaForm[method].call(this.schemaForm);
             }
 
             render() {
@@ -139,7 +149,7 @@ export class SchemaForm extends React.Component<IProps, any> {
 
                 return (
                     <Componment {...props}>
-                        <SchemaForm ref={(element) => { this.schemaForm = element; }} schema={props.schema} uiSchema={props.uiSchema} onChange={props.onChange} form={props.form} formData={props.formData} globalOptions={props.globalOptions} >
+                        <SchemaForm ref={this.key} schema={props.schema} uiSchema={props.uiSchema} onChange={props.onChange} form={props.form} formData={props.formData||{}} globalOptions={props.globalOptions} >
                             {props.children}
                         </SchemaForm>
                     </Componment>

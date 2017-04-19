@@ -2,9 +2,9 @@ import { IUiSchema } from './uischema';
 import { IValidateResult } from './validateresult';
 import { IOptions, MyJsonSchema } from '../core/default.type/utils';
 
-export interface IHOC{
-    init?:()=>void;
-    dispose?:()=>void;
+export interface IHOC {
+    init?: () => void;
+    dispose?: () => void;
 }
 
 export interface ICommonProps {
@@ -44,6 +44,8 @@ export interface ICommonChildProps extends ICommonProps {
     validateResult: { [id: string]: IValidateResult };
     uiSchemaCombine: Array<tv4.JsonSchema & IUiSchema>;
     schemaFormOptions: IOptions;
+    handleTrigger?: (data: any) => void;
+    triggerProps?: { dataSource?: Array<any>, text?: string };
 }
 
 

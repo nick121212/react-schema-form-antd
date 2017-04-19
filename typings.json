@@ -1,0 +1,6 @@
+{
+  "globalDevDependencies": {
+    "eventemitter2": "registry:dt/eventemitter2#2.2.0+20161123234806",
+    "validator": "registry:dt/validator#6.2.0+20170204031613"
+  }
+}

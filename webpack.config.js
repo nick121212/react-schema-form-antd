@@ -62,7 +62,6 @@ module.exports = {
             loaders.scss,
             loaders.ttf,
             loaders.json,
-            loaders.js
         ]
     },
 
@@ -72,6 +71,6 @@ module.exports = {
         'react/addons': true,
         "react": "React",
         "react-dom": "ReactDOM",
-        'antd': 'antd',
+        // 'antd': 'antd',
     })
 };

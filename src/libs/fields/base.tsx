@@ -27,25 +27,9 @@ export abstract class BaseField<P extends ICommonChildProps, S> extends SchemaFo
         formEvent.on("validatorAll", this.onChangeEvent);
     }
 
-    componentWillMount() {
-        console.log("base mount");
-    }
-
-    // componentDidMount() {
-    //     const { formEvent, wrapper = [] } = this.props;
-
-    //     wrapper.forEach((w: IHOC) => {
-    //         w.init();
-    //     });
-
-    //     console.log("mount fields");
-    // }
-
     componentWillUnmount() {
         const { formEvent } = this.props;
 
         formEvent.off("validatorAll", this.onChangeEvent);
-
-        console.log("unmount fields");
     }
 }
