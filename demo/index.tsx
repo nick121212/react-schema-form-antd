@@ -52,7 +52,8 @@ let a = {
             "key": "trigger_day",
             "ui:condition": {
                 "key": "/trigger_mode",
-                "opt": "eqeqeq",
+                "opt": "eq",
+                "initial": true,
                 "value": 3
             },
             "ui:options": {
@@ -83,7 +84,8 @@ let a = {
             "ui:widget": "datepicker",
             "ui:condition": {
                 "key": "/trigger_mode",
-                "opt": "eq",
+                "opt": "gt",
+                "initial": false,
                 "value": 0
             },
         }, {

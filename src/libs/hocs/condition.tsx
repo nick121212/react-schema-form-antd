@@ -34,8 +34,7 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
 
             if (key) {
                 formEvent.on(["changed"].concat(jpp.parse(key)), this.initConditionWrapper);
-
-                this.initCondition(utils.mergeKeys({ uiSchema, arrayIndex }), this.getFieldValue());
+                // this.initCondition(utils.mergeKeys({ uiSchema, arrayIndex }), this.getFieldValue());
             }
         }
 
@@ -43,11 +42,10 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
             const { formEvent } = this.props;
             const { key = "" } = this.getCurrentConditionKeys();
 
-            key && formEvent.off(["changed"].concat(jpp.parse(key)).join(""), this.initConditionWrapper);
+            key && formEvent.off(["changed"].concat(jpp.parse(key)).join("."), this.initConditionWrapper);
         }
 
         initCondition(keys, data) {
-            console.log(this.getKey());
             const { key = "", value, opt = "" } = this.getCurrentConditionKeys();
             const { condition = true } = this.state || {};
 
@@ -59,7 +57,7 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
                 return;
             }
 
-            if (cmp[opt](data, value)) {
+            if (!cmp[opt](data, value)) {
                 return condition && this.setState({
                     condition: false
                 });
@@ -71,7 +69,8 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
         }
 
         render() {
-            const { condition = true } = this.state || {};
+            const { initial = undefined } = this.getCurrentConditionKeys();
+            const { condition = (initial !== undefined ? initial : true) } = this.state || {};
 
             if (!condition) {
                 return <span style={{ display: "none" }}></span>;

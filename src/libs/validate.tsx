@@ -102,9 +102,9 @@ export function validate(form, value): tv4.SingleResult {
     };
 
     let valueWrap = {};
-    if (!!value) {
-        valueWrap[propName] = value;
-    };
+    // if (!!value) {
+    valueWrap[propName] = value;
+    // };
 
     return tv4Validator.validateResult(valueWrap, wrap);
 };
