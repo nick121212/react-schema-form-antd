@@ -16,6 +16,10 @@ SchemaForm通过约定的语法规则来生成配置。你可以使用的默认�
 2. 使用tv4来做验证，兼容第四版本的JSONSCHEMA。
 3. 使用EventEmitter2来触发事件(数据更改，数据验证等)。
 
+### *未完成列表*
+1. **自定义验证**
+2. **自定义验证错误信息**
+
 ## 文档
 
 1. [JsonSchema规范](http://json-schema.org/)
@@ -26,7 +30,7 @@ SchemaForm通过约定的语法规则来生成配置。你可以使用的默认�
 ```
 var schema = {
     "type": "object",
-    "required": ["name", "rollback_flow"],
+    "required": ["name", "rollback_flow","trigger_time","trigger_day"],
     "properties": {
         "trigger_day": {
             "type": "number"
@@ -121,11 +125,22 @@ var uiSchema = ["name",
 </Form>
 ```
 
+上面的事例做了什么？
+1. jsonschema定义了6个字段:[trigger_day,name,trigger_time,flows,trigger_mode,rollback_flow]；其中[name,trigger_day,trigger_time,rollback_flow]必填。
+2. uiSchema定义了需要展示JsonSchema中的那些字段以及展现逻辑。当[trigger_mode>0]显示[trigger_time]；当[trigger_mode=3]显示[trigger_day],此时[trigger_day]的范围是1-7；当[trigger_mode=3]显示[trigger_day],此时[trigger_day]的范围是1-28。
+
 ## 如何安装
 
 ```
 npm install react-schema-form-antd --save
 ```
+
+## 打包
+
+```
+tsc -d
+```
+生成lib目录以及.d.ts文件
 
 ## 如何启动
 ```
