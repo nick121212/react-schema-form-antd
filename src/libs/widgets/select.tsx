@@ -75,6 +75,9 @@ export class SelectWidget extends BaseWidget<IProps, any> {
         if (dataSource.length) {
             titleMap = dataSource;
         }
+        
+        console.log(triggerProps);
+        
 
         return (
             <Select

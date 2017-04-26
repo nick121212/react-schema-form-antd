@@ -8,6 +8,10 @@ import { utils } from '../../utils';
 import { ICommonChildProps } from '../props/common';
 /**
  * 组件显示与否的包装HOC
+ * render boolean  是否需要render
+ * key    string   监听的key,
+ * opt    string   操作
+ * value  any      期望的值
  * @param Component 需要包装的组件
  * @param options   参数
  */
@@ -31,10 +35,11 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
         componentWillMount() {
             const { formEvent, uiSchema, arrayIndex } = this.props;
             const { key = "" } = this.getCurrentConditionKeys();
+            const keys = jpp.parse(key);
 
-            if (key) {
-                formEvent.on(["changed"].concat(jpp.parse(key)), this.initConditionWrapper);
-                // this.initCondition(utils.mergeKeys({ uiSchema, arrayIndex }), this.getFieldValue());
+            if (keys && keys.length) {
+                formEvent.on(["changed"].concat(keys), this.initConditionWrapper);
+                this.initCondition(keys, this.getFieldValueForKeys(keys));
             }
         }
 
@@ -69,15 +74,24 @@ export const ConditionHoc = (Component: any): React.ComponentClass<any> => {
         }
 
         render() {
-            const { initial = undefined } = this.getCurrentConditionKeys();
+            const { initial = undefined, render = false } = this.getCurrentConditionKeys();
             const { condition = (initial !== undefined ? initial : true) } = this.state || {};
+            let styles = {};
 
-            if (!condition) {
+            if (!condition && !render) {
                 return <span style={{ display: "none" }}></span>;
             }
 
+            if (!condition) {
+                styles = {
+                    "display": "none"
+                };
+            }
+
             return (
-                <Component {...this.props}></Component>
+                <span style={styles}>
+                    <Component {...this.props}></Component>
+                </span>
             );
         }
     }

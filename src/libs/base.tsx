@@ -21,7 +21,23 @@ export class SchemaFormBase<P extends ICommonChildProps, S> extends React.Compon
         if (obj.has(key)) {
             return obj.get(key);
         }
-        return null;
+        return undefined;
+    }
+
+    /**
+     * 根据当前传入的keys来得到keys的值
+     * @param keys 
+     */
+    protected getFieldValueForKeys(keys: Array<string>) {
+        const { schemaForm } = this.props,
+            formData = schemaForm.getData(),
+            obj = jpp(formData),
+            key = jpp.compile(keys);
+
+        if (obj.has(key)) {
+            return obj.get(key);
+        }
+        return undefined;
     }
 
     /**
@@ -91,6 +107,31 @@ export class SchemaFormBase<P extends ICommonChildProps, S> extends React.Compon
 
         return utils.compileKeys({ uiSchema, arrayIndex });
     }
+
+    /**
+     * 触发事件
+     * @param name 事件名称
+     * @param args 参数
+     */
+    triggerEvent(name, ...args) {
+        const { formEvent } = this.props;
+
+        formEvent.emit(name, ...args);
+    }
+
+    /**
+     * 外部设置字段的值
+     * @param val 数据项
+     */
+    setData(val: any) {
+        const { uiSchema, arrayIndex } = this.props;
+        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
+
+        this.triggerEvent(["change"].concat(keys), keys, val, uiSchema);
+
+        return true;
+    }
+
 }
 
-new SchemaFormBase(null,null);
+new SchemaFormBase(null, null);

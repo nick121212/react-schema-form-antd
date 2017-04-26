@@ -5,94 +5,62 @@ import { SchemaForm } from '../src/index';
 import 'antd/dist/antd.css';
 
 const formData = {
-    publish_policy: ["1"]
+
 };
+
 let a = {
     schema: {
         "type": "object",
-        "required": ["name", "rollback_flow"],
+        "required": ["job_name", "project_id", "tag", "code_way"],
         "properties": {
-            "trigger_day": {
-                "type": "number"
-            },
-            "trigger_time": {
-                "type": "string"
-            },
-            "name": {
-                "type": "string"
-            },
-            "flows": {
+            "project_id": { type: "number" },
+            "detail": {
                 "type": "array",
                 "items": {
-                    "type": "string"
-                }
-            },
-            "trigger_mode": {
-                "type": "number",
-                "enum": [0, 1, 2, 3, 4]
+                    "type": "object",
+                    "required": ["url", "md5"],
+                    "properties": {
+                        "site_name": {
+                            "type": "string"
+                        },
+                        "url": {
+                            "type": "string"
+                        },
 
-            },
-            "rollback_flow": {
-                "type": "number"
+                        "md5": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     },
-    uiSchema: ["name", {
-        "key": "trigger_mode",
-        "ui:widget": "number",
-        "titleMap": [
-            { label: "立即执行", value: 0 },
-            { label: "定时执行", value: 1 },
-            { label: "每天执行", value: 2 },
-            { label: "每周执行", value: 3 },
-            { label: "每月执行", value: 4 }
-        ],
-
-    }, {
-            "key": "trigger_day",
-            "ui:condition": {
-                "key": "/trigger_mode",
-                "opt": "eq",
-                "initial": true,
-                "value": 3
-            },
+    uiSchema: ["project_id", {
+        "key": "detail",
+        "ui:temp": ["row", "col", "default"],
+        "items": [{
+            "key": "detail/",
+            "ui:temp": [],
             "ui:options": {
-                "widget": {
-                    "inputnumber": {
-                        "min": 1,
-                        "max": 7
-                    }
+                "array": {
+                    "add": false,
+                    "remove": false
                 }
-            }
-        }, {
-            "key": "trigger_day",
-            "ui:condition": {
-                "key": "/trigger_mode",
-                "opt": "eq",
-                "value": 4
             },
-            "ui:options": {
-                "widget": {
-                    "inputnumber": {
-                        "min": 1,
-                        "max": 28
-                    }
-                }
-            }
-        }, {
-            "key": "trigger_time",
-            "ui:widget": "datepicker",
-            "ui:condition": {
-                "key": "/trigger_mode",
-                "opt": "gt",
-                "initial": false,
-                "value": 0
-            },
-        }, {
-            "key": "flows"
-        }, {
-            "key": "rollback_flow"
-        }],
+            "items": [{
+                "key": "detail//site_name",
+                "ui:condition": {
+                    "key": "/project_id",
+                    "opt": "gt",
+                    "value": 0
+                },
+            }, {
+                "key": "detail//url"
+            }, {
+                "key": "detail//md5"
+            }]
+        }]
+    }],
     globalOptions: {
         "ui:temp": "formitem",
         "formItem": {
@@ -104,6 +72,10 @@ let a = {
                 "xs": { "span": 24 },
                 "sm": { "span": 14 },
             }
+        },
+        "col": {
+            "xs": { "span": 24, "offset": 0 },
+            "sm": { "span": 14, "offset": 6 },
         }
     }
 };
@@ -122,13 +94,11 @@ interface IProps {
     getData?: () => any;
 }
 
-
 export interface IAntdSchemaFromProps {
     formData?: any;
     schema: tv4.JsonSchema;
     uiSchema: any;
     globalOptions?: any;
-
     schemaForm?: SchemaForm;
 
     form?: any;
@@ -172,7 +142,7 @@ class AntSchemaFormComponent extends React.Component<IProps & IAntdSchemaFromPro
     }
 }
 
-export const AntSchemaForm = SchemaForm.create(AntSchemaFormComponent);
+export const AntSchemaForm = SchemaForm.create<IAntdSchemaFromProps>(AntSchemaFormComponent);
 
 function onSubmit(data) {
     console.log("submit:", data);

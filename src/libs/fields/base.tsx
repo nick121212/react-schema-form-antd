@@ -3,7 +3,7 @@ import { utils } from '../../utils';
 import { SchemaFormBase } from '../base';
 import { ICommonChildProps, IHOC } from '../props/common';
 
-export abstract class BaseField<P extends ICommonChildProps, S> extends SchemaFormBase<P, S>{
+export class BaseField<P extends ICommonChildProps, S> extends SchemaFormBase<P, S>{
     private onChangeEvent: () => void;
 
     constructor(props: P, context: S) {
@@ -25,11 +25,19 @@ export abstract class BaseField<P extends ICommonChildProps, S> extends SchemaFo
         }).bind(this);
 
         formEvent.on("validatorAll", this.onChangeEvent);
+        formEvent.on(["setData"].concat(keys), this.setData.bind(this));
+    }
+
+    dispose(){
+
     }
 
     componentWillUnmount() {
-        const { formEvent } = this.props;
+        const { formEvent, uiSchema, arrayIndex } = this.props;
+        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
 
         formEvent.off("validatorAll", this.onChangeEvent);
+        formEvent.off(["setData"].concat(keys).join('.'), this.setData.bind(this));
+        this.dispose();
     }
 }

@@ -28,6 +28,8 @@ import { BaseField } from './libs/fields/base';
 import { BaseTemp } from './libs/temps/base';
 import { BaseFactory } from './libs/base.factory';
 import { ICommonChildProps } from "./libs/props/common";
+import { mergeSchema } from './libs/core/merge';
+import { FormWidget } from './libs/widgets/form';
 
 fieldFactory.add("object", ObjectField as any);
 fieldFactory.add("string", StringField as any);
@@ -53,7 +55,19 @@ widgetFactory.add("checkboxes", CheckboxesWidget as any);
 widgetFactory.add("autocomplete", AutoCompleteWidget as any);
 widgetFactory.add("tree", TreeWidget as any);
 widgetFactory.add("steps", StepsWidget as any);
+widgetFactory.add("form", FormWidget as any);
 
 export {
-    SchemaForm, fieldFactory, tempFactory, widgetFactory, IUiSchema, BaseWidget, BaseField, BaseTemp, BaseFactory, utils, ICommonChildProps
+    SchemaForm,
+    fieldFactory,
+    tempFactory,
+    widgetFactory,
+    IUiSchema,
+    BaseWidget,
+    BaseField,
+    BaseTemp,
+    mergeSchema,
+    BaseFactory,
+    utils,
+    ICommonChildProps
 };

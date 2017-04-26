@@ -6,4 +6,5 @@ import { BaseField } from './libs/fields/base';
 import { BaseTemp } from './libs/temps/base';
 import { BaseFactory } from './libs/base.factory';
 import { ICommonChildProps } from "./libs/props/common";
-export { SchemaForm, fieldFactory, tempFactory, widgetFactory, IUiSchema, BaseWidget, BaseField, BaseTemp, BaseFactory, utils, ICommonChildProps };
+import { mergeSchema } from './libs/core/merge';
+export { SchemaForm, fieldFactory, tempFactory, widgetFactory, IUiSchema, BaseWidget, BaseField, BaseTemp, mergeSchema, BaseFactory, utils, ICommonChildProps };

@@ -21,12 +21,15 @@ export class DefaultTemp extends BaseTemp<IProps, any>{
         const { error, invalid, dirty } = this.getErrorInfo();
 
         return (
-            <span>
-                {children}
+            <div>
+                <div>
+                    {children}
+                    <i style={{ clear: "both", display: "block" }}></i>
+                </div>
                 <div>
                     {invalid && dirty && error.message + this.getKey()}
                 </div>
-            </span>
+            </div>
         );
     }
 }

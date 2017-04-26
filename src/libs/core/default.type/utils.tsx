@@ -10,7 +10,7 @@ export const enumToTitleMap = (enm) => {
 
 export interface MyJsonSchema extends tv4.JsonSchema {
     $ref?: string;
-    key: Array<string>;
+    key?: Array<string>;
     titleMap?: Array<any>;
     maxLength?: number;
     minLength?: number;

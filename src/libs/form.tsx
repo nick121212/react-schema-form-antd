@@ -29,7 +29,7 @@ export class SchemaForm extends React.Component<IProps, any> {
      * 字段更改后触发的事件
      */
     private onChangeAll: (keys: Array<string>, data: any, uiSchema: IUiSchema) => void;
-    private onValidate: (keys: Array<string>, data: any, uiSchema: IUiSchema) => void;
+    private onValidate: (keys: Array<string>, data: any, uiSchema: IUiSchema) => tv4.SingleResult;
 
     /**
      * 构造
@@ -52,6 +52,14 @@ export class SchemaForm extends React.Component<IProps, any> {
         return this.valid;
     }
 
+    setData(keys: Array<string>, val: any) {
+        this.formEvent["emitAsync"](["setData"].concat(keys), val).then((results) => {
+            if (!results || !results.length) {
+                utils.saveData({ data: val, formData: this.props.formData, keys });
+            }
+        });
+    }
+
     /**
      * 获取数据
      */
@@ -70,28 +78,34 @@ export class SchemaForm extends React.Component<IProps, any> {
         const { schema, uiSchema, onChange } = this.props;
 
         this.onChangeAll = (keys, data, uiSchema: IUiSchema) => {
+            let validateResult: tv4.SingleResult = this.onValidate(keys, data, uiSchema);
+
+            // if (validateResult.valid) {
             // 保存数据
             utils.saveData({ data, formData: this.props.formData, keys });
             // 触发changed事件
             this.formEvent.emit(["changed"].concat(keys), keys, data);
-            this.onValidate(keys, data, uiSchema);
+            // 触发数据更改事件
             onChange && onChange(keys, data);
+            // }
         };
-        // 单个widget更改事件
-        this.formEvent.on(["change", "**"], this.onChangeAll);
 
-        this.onValidate = (keys, data, uiSchema) => {
+        this.onValidate = (keys, data, uiSchema): tv4.SingleResult => {
             let validateResult: tv4.SingleResult = utils.validateSingle({ keys, data, uiSchema, validateResult: this.validateResult });
 
             this.valid = this.valid && validateResult.valid;
 
             if (!validateResult.valid) {
-                console.log(validateResult);
+                console.log(keys.join('.'), data, validateResult);
             }
             // 触发validator事件
             this.formEvent.emit(["setValidator"].concat(keys), keys, validateResult);
-        };
 
+            return validateResult;
+        };
+        // 单个widget更改事件
+        this.formEvent.on(["change", "**"], this.onChangeAll);
+        // 单个widget验证事件
         this.formEvent.on(["validator", "**"], this.onValidate);
     }
 
@@ -122,7 +136,11 @@ export class SchemaForm extends React.Component<IProps, any> {
      * HOC，用于包裹schemaform组件
      * @param Componment 组件
      */
-    static create(Componment): React.ComponentClass<any> {
+    static create<P>(Componment): React.ComponentClass<P & IProps & {
+        getData?: () => any;
+        validator?: () => boolean;
+        setData?: (keys: Array<string>, data: any) => void;
+    }> {
         let count = 0;
 
         return class SchemaFormHoc extends React.Component<any, any> {
@@ -145,11 +163,11 @@ export class SchemaForm extends React.Component<IProps, any> {
             }
 
             render() {
-                const props = Object.assign({}, this.props, { getData: this.proc.bind(this, "getData"), validator: this.proc.bind(this, "validator") });
+                const props = Object.assign({}, this.props, { getData: this.proc.bind(this, "getData"), validator: this.proc.bind(this, "validator"), setData: this.proc.bind(this, "setData") });
 
                 return (
                     <Componment {...props}>
-                        <SchemaForm ref={this.key} schema={props.schema} uiSchema={props.uiSchema} onChange={props.onChange} form={props.form} formData={props.formData||{}} globalOptions={props.globalOptions} >
+                        <SchemaForm ref={this.key} schema={props.schema} uiSchema={props.uiSchema} onChange={props.onChange} form={props.form} formData={props.formData || {}} globalOptions={props.globalOptions} >
                             {props.children}
                         </SchemaForm>
                     </Componment>

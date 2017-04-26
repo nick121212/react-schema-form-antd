@@ -17,22 +17,30 @@ export class Utils {
      */
     getField(uiSchema: IUiSchema): any {
         let FieldTemp = fieldFactory.get(uiSchema["ui:field"] || uiSchema.type || (uiSchema.schema ? uiSchema.schema.type : ""));
-        let hoc = uiSchema["ui:hoc"];
+        let hoc = uiSchema["ui:hoc"] || {};
 
         if (!FieldTemp) {
             console.log(uiSchema, "找不到Field");
         }
 
-        if (!hoc) {
-            hoc = {
-                hoc: (Component, fn) => {
-                    return Component;
-                },
-                params: {}
-            };
+        // if (!hoc) {
+        //     hoc = {
+        //         hoc: (Component, fn) => {
+        //             return Component;
+        //         },
+        //         params: {}
+        //     };
+        // }
+        if (FieldTemp) {
+            FieldTemp = TriggerHoc(FieldTemp);
+            FieldTemp = TempHoc(FieldTemp);
+            FieldTemp = ConditionHoc(FieldTemp);
+            if (hoc.hoc) {
+                FieldTemp = hoc.hoc(FieldTemp, hoc.params || {});
+            }
         }
 
-        return FieldTemp ? hoc.hoc(TriggerHoc(ConditionHoc(TempHoc(FieldTemp))), hoc.params || {}) : FieldTemp;
+        return FieldTemp;
     }
 
     /**

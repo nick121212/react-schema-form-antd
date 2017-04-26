@@ -1,6 +1,6 @@
 {
     "name": "react-schema-form-antd",
-    "version": "1.2.1",
+    "version": "1.2.20",
     "description": "antdessign的schema-form",
     "main": "lib/index.js",
     "scripts": {

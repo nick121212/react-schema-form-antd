@@ -17,19 +17,23 @@ export class ObjectField extends BaseField<IProps, any>{
 
     init() {
         const { uiSchema, formEvent, arrayIndex, schemaFormOptions } = this.props;
-        const uiSchemaCombine = mergeSchema(uiSchema["schema"], uiSchema["uiSchema"], schemaFormOptions, (uiSchema as IUiSchema).key as string[]);
 
-        (uiSchema as IUiSchema).items = uiSchemaCombine.form;
+        if (!(uiSchema as IUiSchema).init) {
+            const uiSchemaCombine = mergeSchema(uiSchema["schema"], uiSchema["uiSchema"], schemaFormOptions, (uiSchema as IUiSchema).key as string[]);
+
+            (uiSchema as IUiSchema).items = uiSchemaCombine.form;
+            (uiSchema as IUiSchema).init = true;
+        }
 
         super.init();
     }
 
     render() {
-        const { schema, uiSchema, arrayItems,  ...extra } = this.props;
+        const { schema, uiSchema, arrayItems, ...extra } = this.props;
         const options = uiSchema["ui:options"] || {};
 
         return (
-            <Card {...options.card} title={
+            <Card {...options.card} style={{ marginBottom: 10 }} title={
                 <Row type="flex" justify="space-between">
                     <Col>
                         {(uiSchema as tv4.JsonSchema).title}

@@ -11,9 +11,14 @@ export declare class SchemaForm extends React.Component<IProps, any> {
     private onValidate;
     constructor(props: IProps, context: any);
     validator(): boolean;
+    setData(keys: Array<string>, val: any): void;
     getData(): any;
     init(): void;
     componentWillUnmount(): void;
     render(): JSX.Element;
-    static create(Componment: any): React.ComponentClass<any>;
+    static create<P>(Componment: any): React.ComponentClass<P & IProps & {
+        getData?: () => any;
+        validator?: () => boolean;
+        setData?: (keys: Array<string>, data: any) => void;
+    }>;
 }

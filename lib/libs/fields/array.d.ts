@@ -5,6 +5,7 @@ export interface IProps extends ICommonChildProps {
 }
 export declare class ArrayField extends BaseField<IProps, any> {
     private changeCurrentArray;
+    private onChanged;
     constructor(props: any, context: any);
     handleChange(opt: string, idx: number, keys: Array<string>, items: any): void;
     handleAdd(e: any): void;
@@ -12,8 +13,7 @@ export declare class ArrayField extends BaseField<IProps, any> {
     handleUp(idx: any): void;
     handleDown(idx: any): void;
     renderItems(): any[];
-    componentDidUpdate(prevProps: any, prevState: any): void;
     init(): void;
-    componentWillUnmount(): void;
+    dispose(): void;
     render(): JSX.Element;
 }
