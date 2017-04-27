@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Icon, AutoComplete } from 'antd';
+import { Input, Icon, AutoComplete, Button } from 'antd';
 
 import { ICommonProps, ICommonChildProps } from '../props/common';
 import { IUiSchema } from '../props/uischema';
@@ -11,71 +11,82 @@ export interface IProps extends ICommonChildProps {
 }
 
 export class AutoCompleteWidget extends BaseWidget<IProps, any> {
-    private timeId: number;
-
     constructor(props, context) {
         super(props, context);
     }
 
     setDefaultProps() {
-        const { defaultValue, uiSchema } = this.props;
-        const { schema = {}, titleMap = [] } = uiSchema as IUiSchema;
-        const { text = undefined } = this.state || {};
+        const { uiSchema } = this.props;
+        const { titleMap = [], schema = {} } = uiSchema as IUiSchema;
+        const { value = undefined, text = undefined, loading = false } = this.state || {};
+        const defaultValue = this.getFieldValue();
+        const changeProp = uiSchema["ui:change"] || "onChange";
 
         let props = {};
 
         if (defaultValue) {
-            props["defaultValue"] = defaultValue;
+            props["defaultValue"] = defaultValue.toString();
         }
-        if (schema.type === "array") {
-            props["multiple"] = true;
-        }
-        if (text != undefined) {
-            props["value"] = text;
+        if (value) {
+            props["value"] = value.toString();
         }
 
-        return Object.assign({}, super.setDefaultProps(), props);
+        props[changeProp] = this.handleChange.bind(this);
+
+        if (props.hasOwnProperty("value")) {
+            delete props["defaultValue"];
+        }
+
+        return props;
     }
 
-    handleChange(value: string) {
-        const { uiSchema, arrayIndex } = this.props;
+    handleChange(value) {
+        const { uiSchema, arrayIndex, handleTrigger, ...extra } = this.props;
         const keys = utils.mergeKeys({ uiSchema, arrayIndex });
-        const { text = undefined } = this.state;
 
-        if (text != value && value != this.getFieldValue()) {
-            this.timeId && clearTimeout(this.timeId);
-            this.timeId = setTimeout(() => {
-                uiSchema["ui:trigger"] && uiSchema["ui:trigger"](value).then((dataSource) => {
-                    this.setState({
-                        dataSource: dataSource,
-                        text: value
-                    });
-                });
-            }, 300);
+
+        if ((uiSchema as IUiSchema).schema.type === "number") {
+            value = ~~value;
         }
-    }
 
-    onSelect(value) {
-        const { uiSchema, children, globalOptions, arrayIndex, schemaForm, onChange, defaultValue, formEvent, form, ...extra } = this.props;
-        const keys = utils.mergeKeys({ uiSchema, arrayIndex });
+        if (value === this.getFieldValue()) {
+            return;
+        }
 
         this.triggerEvent(["change"].concat(keys), keys, value, uiSchema);
     }
 
     render() {
-        const { uiSchema, children, globalOptions, arrayIndex, schemaForm, onChange, defaultValue, formEvent, form, ...extra } = this.props;
+        const { uiSchema, children, globalOptions, formData, arrayIndex, schemaForm, onChange, formEvent, form, triggerProps, ...extra } = this.props;
         const options = uiSchema["ui:options"] || {}, { autocomplete = {} } = options.widget || {};
-        const { dataSource = [] } = this.state || {};
+        let { titleMap = [], schema = {} } = uiSchema as IUiSchema;
+        let { dataSource = [], text = "", loading = false } = this.state || {};
+        let uiData = utils.getUiData(uiSchema, formData);
+
+        if (uiData.length) {
+            titleMap = uiData;
+        }
+        if (dataSource.length) {
+            titleMap = dataSource;
+        }
 
         return (
             <AutoComplete
+                className="global-search"
+                dataSource={titleMap as any}
                 disabled={(uiSchema as IUiSchema).readonly}
                 placeholder={(uiSchema as tv4.JsonSchema).title}
-                onSelect={this.onSelect.bind(this)}
-                onChange={this.handleChange.bind(this)}
-                dataSource={dataSource}
+                optionLabelProp="label"
+                {...triggerProps as Object}
+                {...this.setDefaultProps() }
                 {...autocomplete}>
-                <Input suffix={<Icon type="search" className="certain-category-icon" />} />
+                <Input
+                    suffix={(
+                        <Button className="search-btn" size="small" ghost={true}>
+                            <Icon type="search" />
+                        </Button>
+                    )}
+                />
             </AutoComplete>
         );
     }

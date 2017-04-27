@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as tv4 from 'tv4';
+import * as jpp from 'json-pointer';
+import * as map from 'lodash.map';
 
 import { BaseFactory } from './libs/base.factory';
 import { IUiSchema } from './libs/props/uischema';
-import * as jpp from 'json-pointer';
-
 import { validate } from './libs/validate';
 import { ConditionHoc } from './libs/hocs/condition';
 import { TempHoc } from './libs/hocs/temp';
@@ -95,7 +95,7 @@ export class Utils {
             if (!FieldComponent) {
                 FieldComponent = this.getTemplateRender({ schema, uiSchemaCombine: uiSchema.items, ...extra });
             } else {
-                FieldComponent = (<FieldComponent key={Date.now() + idx + Math.random()} schema={schema} uiSchema={uiSchema} {...extra} />)
+                FieldComponent = (<FieldComponent key={`${idx}${this.compileKeys({ uiSchema, arrayIndex: extra['arrayIndex'] })}`} schema={schema} uiSchema={uiSchema} {...extra} />)
             }
 
             FieldComponent && children.push(FieldComponent);
@@ -167,6 +167,78 @@ export class Utils {
         }
 
         return rtn;
+    }
+
+    /**
+     * 从数据源中获取select的option所需的数据
+     * @param data       数据源
+     * @param idField    id的字段
+     * @param labelField label的字段
+     */
+    getOptions(data: Array<any>, idField, labelField) {
+        // let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
+
+        if (!idField) {
+            return data;
+        }
+
+        return data.map((d) => {
+            let text = d[labelField] || d[idField].toString();
+
+            return {
+                label: text,
+                name: text,
+                text: text,
+                value: d[idField].toString()
+            };
+        });
+    }
+
+    /**
+     * 保存表单搜索数据结果
+     * @param uiSchema uiSchema
+     * @param formData 表单的数据项
+     * @param data     搜索得到的数据
+     */
+    setUiData(uiSchema, formData, data) {
+        let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
+        let currentData = {};
+
+        if (!path) {
+            return;
+        }
+
+        if (jpp.has(formData, path)) {
+            currentData = jpp.get(formData, path);
+        }
+
+        jpp.set(formData, path, Object.assign({}, currentData, data));
+    }
+
+    /**
+     * 获取表单搜索数据结果
+     * @param uiSchema uiSchema
+     * @param formData 表单的数据项
+     */
+    getUiData(uiSchema, formData) {
+        let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
+        let currentData = {};
+
+        if (!path || !idField) {
+            return [];
+        }
+
+        if (jpp.has(formData, path)) {
+            currentData = jpp.get(formData, path);
+        }
+
+        let data = map(currentData, (d, key) => {
+            return Object.assign({}, d, {
+                [idField]: key
+            });
+        });
+
+        return this.getOptions(data, idField, labelField);
     }
 
 }

@@ -1,6 +1,6 @@
 {
     "name": "react-schema-form-antd",
-    "version": "1.2.20",
+    "version": "1.2.25",
     "description": "antdessign的schema-form",
     "main": "lib/index.js",
     "scripts": {
@@ -75,7 +75,9 @@
         "validator": "^7.0.0"
     },
     "dependencies": {
-        "comparejs": "^0.1.6"
+        "comparejs": "^0.1.6",
+        "lodash.keyby": "^4.6.0",
+        "lodash.map": "^4.6.0"
     },
     "typings": "lib/index.d.ts",
     "directories": {},

@@ -27,7 +27,7 @@ export const mergeSchema = (schema: MyJsonSchema, uiSchema: Array<IUiSchema | st
             .concat(uiSchema.slice(idx + 1));
     }
 
-    console.log(options.lookup);
+    // console.log(options.lookup);
 
     let uiSchemaCombine = uiSchema.map((obj: IUiSchema & tv4.JsonSchema) => {
         let ownKey = [];

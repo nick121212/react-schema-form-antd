@@ -1,8 +1,10 @@
 import * as React from 'react';
+import keyBy = require('lodash.keyby');
 
 import { SchemaFormBase } from '../base';
 import { utils } from '../../utils';
 import { HocBase } from './base';
+import * as jpp from 'json-pointer';
 
 /**
  * 包装Template的组件HOC
@@ -21,10 +23,11 @@ export const TriggerHoc = (Component: any): React.ComponentClass<any> => {
         }
 
         handleTrigger(value) {
-            const { uiSchema, arrayIndex, formEvent, schemaForm } = this.props;
+            const { uiSchema, arrayIndex, formEvent, formData, schemaForm } = this.props;
             const keys = utils.mergeKeys({ uiSchema, arrayIndex });
             const { text = undefined } = this.state || {};
-            let { prop = "", trigger = null, always = false } = uiSchema["ui:trigger"]
+            let { prop = "", trigger = null, always = false } = uiSchema["ui:trigger"];
+            let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
 
             if (always || (value != text && trigger)) {
                 this.timeId && clearTimeout(this.timeId);
@@ -35,9 +38,12 @@ export const TriggerHoc = (Component: any): React.ComponentClass<any> => {
                         value: undefined,
                         text: value
                     });
-                    trigger(value, schemaForm).then((dataSource) => {
+                    trigger(value, schemaForm).then((dataSource: Array<any>) => {
+                        if (path) {
+                            jpp.set(formData, path, keyBy(dataSource, idField));
+                        }
                         formEvent.emit(["triggerEvent"].concat(keys), {
-                            dataSource: dataSource,
+                            dataSource: utils.getOptions(dataSource, idField, labelField),
                             loading: false
                         });
                     });

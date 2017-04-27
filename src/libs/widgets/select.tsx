@@ -21,16 +21,21 @@ export class SelectWidget extends BaseWidget<IProps, any> {
         const { titleMap = [], schema = {} } = uiSchema as IUiSchema;
         const { value = undefined, text = undefined } = this.state || {};
         const defaultValue = this.getFieldValue();
+        const changeProp = uiSchema["ui:change"] || "onChange";
 
         let props = {};
 
         if (schema.type === "array") {
             props["mode"] = "multiple";
             if (defaultValue) {
-                props["defaultValue"] = defaultValue;
+                props["defaultValue"] = defaultValue.map((d) => {
+                    return d.toString();
+                });
             }
             if (value) {
-                props["value"] = value;
+                props["value"] = value.map((d) => {
+                    return d.toString();
+                });;
             }
         } else {
             if (defaultValue) {
@@ -41,11 +46,16 @@ export class SelectWidget extends BaseWidget<IProps, any> {
             }
         }
 
-        props = Object.assign({}, props);
+        props[changeProp] = this.handleChange.bind(this);
 
         if (props.hasOwnProperty("value")) {
             delete props["defaultValue"];
         }
+
+        props["children"] = [{
+            key: 1,
+            text: "id1"
+        }];
 
         return props;
     }
@@ -62,36 +72,35 @@ export class SelectWidget extends BaseWidget<IProps, any> {
             return;
         }
 
-        // this.setState({ text: item.props.title });
         this.triggerEvent(["change"].concat(keys), keys, value, uiSchema);
     }
 
     render() {
-        const { uiSchema, children, globalOptions, arrayIndex, schemaForm, onChange, defaultValue, formEvent, form, triggerProps, ...extra } = this.props;
+        const { uiSchema, children, globalOptions, formData, arrayIndex, schemaForm, onChange, formEvent, form, triggerProps, ...extra } = this.props;
         const options = uiSchema["ui:options"] || {}, { select = {} } = options.widget || {};
         let { titleMap = [], schema = {} } = uiSchema as IUiSchema;
         let { dataSource = [], text = "", loading = false } = this.state || {};
+        let uiData = utils.getUiData(uiSchema, formData);
+
+        if (uiData.length) {
+            titleMap = uiData;
+        }
 
         if (dataSource.length) {
             titleMap = dataSource;
         }
-        
-        console.log(triggerProps);
-        
 
         return (
             <Select
-                // onSelect={this.handleChange.bind(this)}
-                onChange={this.handleChange.bind(this)}
                 disabled={(uiSchema as IUiSchema).readonly}
                 placeholder={(uiSchema as tv4.JsonSchema).title}
                 notFoundContent={loading ? <Spin size="small" /> : null}
+                {...triggerProps as Object}
                 {...select}
-                {...triggerProps}
                 {...this.setDefaultProps() }>
                 {
                     titleMap.map((val, i) => {
-                        return <Select.Option value={val.value} title={val.label} key={val.value}>{val.label}</Select.Option>
+                        return <Select.Option value={val.value} key={val.value}>{val.label}</Select.Option>
                     })
                 }
             </Select>

@@ -149,16 +149,17 @@ export class SchemaForm extends React.Component<IProps, any> {
 
             componentWillMount() {
                 this.key = "schemaForm-" + count++;
+                console.log(this.key);
             }
 
             proc(method) {
-                let schemaForm = this.refs[this.key];
+                // let schemaForm = this.refs[this.key];
 
-                if (!schemaForm) {
+                if (!this.schemaForm) {
                     throw new Error("没有找到SchemaForm");
                 }
 
-                return schemaForm[method].call(schemaForm);
+                return this.schemaForm[method].call(this.schemaForm);
                 // return this.schemaForm[method].call(this.schemaForm);
             }
 
@@ -167,10 +168,10 @@ export class SchemaForm extends React.Component<IProps, any> {
 
                 return (
                     <Componment {...props}>
-                        <SchemaForm ref={this.key} schema={props.schema} uiSchema={props.uiSchema} onChange={props.onChange} form={props.form} formData={props.formData || {}} globalOptions={props.globalOptions} >
-                            {props.children}
+                        <SchemaForm ref={(ele) => { this.schemaForm = ele; }} schema={this.props.schema} uiSchema={this.props.uiSchema} onChange={this.props.onChange} form={this.props.form} formData={this.props.formData || {}} globalOptions={this.props.globalOptions} >
+                            {this.props.children}
                         </SchemaForm>
-                    </Componment>
+                    </Componment >
                 );
             }
         }

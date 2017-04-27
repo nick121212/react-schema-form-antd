@@ -1,11 +1,18 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { SchemaForm } from '../src/index';
+import { SchemaForm, utils } from '../src/index';
 
 import 'antd/dist/antd.css';
 
 const formData = {
-
+    detail: [{}],
+    project_id: 1,
+    data: {
+        projects: {
+            1: { id: 1, name: "id1" },
+            2: { id: 1, name: "id2" }
+        }
+    }
 };
 
 let a = {
@@ -35,18 +42,39 @@ let a = {
             }
         }
     },
-    uiSchema: ["project_id", {
+    uiSchema: [{
+        "key": "project_id",
+        "ui:widget": "autocomplete",
+        "ui:change": "onSelect",
+        "ui:data": {
+            "path": "/data/projects",
+            "idField": "id",
+            "labelField": "name"
+        },
+        "ui:trigger": {
+            "prop": "onSearch",
+            "trigger": (text: string) => {
+                return new Promise<Array<any>>((resolve, reject) => {
+                    resolve([{ id: 1, name: "id1" }, { id: 2, name: "id2" }]);
+                });
+            }
+        },
+        "ui:options": {
+            "widget": {
+                autocomplete: {
+                    filterOption: false,
+                    showArrow: false,
+                    showSearch: true,
+                    optionLabelProp: "children"
+                }
+            }
+        }
+    }, {
         "key": "detail",
         "ui:temp": ["row", "col", "default"],
         "items": [{
             "key": "detail/",
             "ui:temp": [],
-            "ui:options": {
-                "array": {
-                    "add": false,
-                    "remove": false
-                }
-            },
             "items": [{
                 "key": "detail//site_name",
                 "ui:condition": {
@@ -55,7 +83,36 @@ let a = {
                     "value": 0
                 },
             }, {
-                "key": "detail//url"
+                "key": "detail//url",
+                "ui:change": "onSelect",
+                "ui:widget": "select",
+                "ui:data": {
+                    "path": "/data/projects",
+                    "idField": "id",
+                    "labelField": "name"
+                },
+                "ui:trigger": {
+                    "prop": "onSearch",
+                    "ui:data": {
+                        "path": "/data/projects"
+                    },
+                    "trigger": (text) => {
+                        return new Promise((resolve, reject) => {
+                            resolve([{ id: 1, name: "id1" }, { id: 2, name: "id2" }]);
+                        });
+                    }
+                },
+                "ui:options": {
+                    "widget": {
+                        select: {
+                            mode: "combobox",
+                            filterOption: false,
+                            showArrow: false,
+                            showSearch: true,
+                            optionLabelProp: "children"
+                        }
+                    }
+                }
             }, {
                 "key": "detail//md5"
             }]
@@ -139,6 +196,10 @@ class AntSchemaFormComponent extends React.Component<IProps & IAntdSchemaFromPro
         if (this.props.validator()) {
             onSubmit && onSubmit(this.props.getData());
         }
+
+        this.setState({
+            t: new Date()
+        });
     }
 }
 
