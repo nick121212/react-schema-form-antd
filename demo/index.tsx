@@ -15,111 +15,81 @@ const formData = {
     }
 };
 
+let cols = [[
+    "host_name", "sn"
+], [
+    "ip_info", "minion_ip"
+], [
+    "physical_cpu_core", "physical_cpu_mhz"
+], [
+    "physical_cpu_thread", "logical_cpu_core"
+], [
+    "disk_info", "system_ver"
+], [
+    "eth_cnt", "mac_info"
+], [
+    "stat_line", "stat_distribution"
+], [
+    "mem", "mem_slot", "mem_slot_used"
+], [
+    "os_release", "os_arch", "os_type"
+]];
+
+function getColInfo() {
+    let data = [];
+
+    data = cols.map((c) => {
+        return {
+            "ui:temp": ["row"],
+            "ui:field": "none",
+            "items": c.map((d) => {
+                return {
+                    "ui:temp": ["col"],
+                    "ui:field": "none",
+                    "items": [d],
+                    "ui:options": {
+                        "col": {
+                            "span": 24 / c.length
+                        }
+                    }
+                };
+            })
+        }
+    });
+
+    return data;
+}
+
 let a = {
     schema: {
         "type": "object",
-        "required": ["job_name", "project_id", "tag", "code_way"],
+        "required": ["host_name", "sn", "ip_info"],
         "properties": {
-            "project_id": { type: "number" },
-            "detail": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "required": ["url", "md5"],
-                    "properties": {
-                        "site_name": {
-                            "type": "string"
-                        },
-                        "url": {
-                            "type": "string"
-                        },
-
-                        "md5": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
+            "host_name": { "type": "string", "title": "主机名" },
+            "sn": { "type": "string", "title": "SN" },
+            "ip_info": { "type": "string", "title": "IP", "format": "ip" },
+            "physical_cpu_core": { "type": "number", "title": "物理CPU个数" },
+            "physical_cpu_mhz": { "type": "string", "title": "CPU频率" },
+            "physical_cpu_thread": { "type": "number", "title": "CPU线程数" },
+            "logical_cpu_core": { "type": "number", "title": "逻辑CPU个数" },
+            "mem": { "type": "number", "title": "内存大小" },
+            "mem_slot": { "type": "number", "title": "内存插槽数" },
+            "mem_slot_used": { "type": "number", "title": "已使用内存插槽数" },
+            "disk_info": { "type": "string", "title": "硬盘信息" },
+            "os_release": { "type": "string", "title": "系统版本" },
+            "os_arch": { "type": "string", "title": "系统架构" },
+            "mac_info": { "type": "string", "title": "MAC地址" },
+            "eth_cnt": { "type": "number", "title": "网卡数量" },
+            "stat_line": { "type": "number", "title": "是否在线" },
+            "stat_distribution": { "type": "number", "title": "分配状态" },
+            "minion_ip": { "type": "string", "title": "客户端IP", "format": "ip" },
+            "system_ver": { "type": "string", "title": "操作系统版本" },
+            "os_type": { "type": "string", "title": "操作系统类型" }
         }
     },
-    uiSchema: [{
-        "key": "project_id",
-        "ui:widget": "autocomplete",
-        "ui:change": "onSelect",
-        "ui:data": {
-            "path": "/data/projects",
-            "idField": "id",
-            "labelField": "name"
-        },
-        "ui:trigger": {
-            "prop": "onSearch",
-            "trigger": (text: string) => {
-                return new Promise<Array<any>>((resolve, reject) => {
-                    resolve([{ id: 1, name: "id1" }, { id: 2, name: "id2" }]);
-                });
-            }
-        },
-        "ui:options": {
-            "widget": {
-                autocomplete: {
-                    filterOption: false,
-                    showArrow: false,
-                    showSearch: true,
-                    optionLabelProp: "children"
-                }
-            }
-        }
-    }, {
-        "key": "detail",
-        "ui:temp": ["row", "col", "default"],
-        "items": [{
-            "key": "detail/",
-            "ui:temp": [],
-            "items": [{
-                "key": "detail//site_name",
-                "ui:condition": {
-                    "key": "/project_id",
-                    "opt": "gt",
-                    "value": 0
-                },
-            }, {
-                "key": "detail//url",
-                "ui:change": "onSelect",
-                "ui:widget": "select",
-                "ui:data": {
-                    "path": "/data/projects",
-                    "idField": "id",
-                    "labelField": "name"
-                },
-                "ui:trigger": {
-                    "prop": "onSearch",
-                    "ui:data": {
-                        "path": "/data/projects"
-                    },
-                    "trigger": (text) => {
-                        return new Promise((resolve, reject) => {
-                            resolve([{ id: 1, name: "id1" }, { id: 2, name: "id2" }]);
-                        });
-                    }
-                },
-                "ui:options": {
-                    "widget": {
-                        select: {
-                            mode: "combobox",
-                            filterOption: false,
-                            showArrow: false,
-                            showSearch: true,
-                            optionLabelProp: "children"
-                        }
-                    }
-                }
-            }, {
-                "key": "detail//md5"
-            }]
-        }]
-    }],
+    uiSchema: getColInfo(),
     globalOptions: {
-        "ui:temp": "formitem",
+        "ui:temp": ["formitem"],
         "formItem": {
             "labelCol": {
                 "xs": { "span": 24 },
@@ -128,11 +98,10 @@ let a = {
             "wrapperCol": {
                 "xs": { "span": 24 },
                 "sm": { "span": 14 },
-            }
+            },
         },
-        "col": {
-            "xs": { "span": 24, "offset": 0 },
-            "sm": { "span": 14, "offset": 6 },
+        "row": {
+            "type": "flex"
         }
     }
 };

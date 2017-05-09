@@ -13,8 +13,8 @@ export class RowTemp extends React.Component<IProps, any>{
     }
 
     render() {
-        const { schema, uiSchema, children, globalOptions = {} } = this.props;
-        const options = uiSchema["ui:options"] || {};
+        const { schema, uiSchema, children, globalOptions = { row: {} } } = this.props;
+        const options = uiSchema["ui:options"] || { row: {} };
 
         return (
             <Row {...globalOptions.row} {...options.row}>

@@ -54,10 +54,10 @@ export class ArrayField extends BaseField<IProps, any>{
                 }
                 break;
             case "down":
-                this.swapObjectItems(jpp(validateResult).get(jpp.compile(keys)), idx, ++idx);
+                jpp(validateResult).has(jpp.compile(keys)) && this.swapObjectItems(jpp(validateResult).get(jpp.compile(keys)), idx, ++idx);
                 break;
             case "up":
-                this.swapObjectItems(jpp(validateResult).get(jpp.compile(keys)), idx, --idx);
+                jpp(validateResult).has(jpp.compile(keys)) && this.swapObjectItems(jpp(validateResult).get(jpp.compile(keys)), idx, --idx);
                 break;
         }
 
