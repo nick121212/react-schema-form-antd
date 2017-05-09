@@ -39,9 +39,10 @@ export const TriggerHoc = (Component: any): React.ComponentClass<any> => {
                         text: value
                     });
                     trigger(value, schemaForm).then((dataSource: Array<any>) => {
-                        if (path) {
-                            jpp.set(formData, path, keyBy(dataSource, idField));
-                        }
+                        // if (path) {
+                        //     jpp.set(formData, path, keyBy(dataSource, idField));
+                        // }
+                        utils.setUiData(uiSchema, formData, keyBy(dataSource, idField));
                         formEvent.emit(["triggerEvent"].concat(keys), {
                             dataSource: utils.getOptions(dataSource, idField, labelField),
                             loading: false

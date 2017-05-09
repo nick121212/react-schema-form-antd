@@ -175,7 +175,7 @@ export class ArrayField extends BaseField<IProps, any>{
         const { onChange } = uiSchema as IUiSchema;
         let timeid;
 
-        this.changeCurrentArray = (childKeys: Array<string>, data) => {
+        this.changeCurrentArray = ((childKeys: Array<string>, data) => {
             if (timeid) {
                 clearTimeout(timeid);
             }
@@ -191,16 +191,16 @@ export class ArrayField extends BaseField<IProps, any>{
                 // onChange && onChange(keys, currentValue, schemaForm);
                 onChange && onChange(keys, currentValue, schemaForm);
             }, 1000);
-        }
+        }).bind(this);
 
-        this.onChanged = (childKeys: Array<string>, data) => {
+        this.onChanged = ((childKeys: Array<string>, data) => {
             this.forceUpdate();
             onChange && onChange(keys, data, schemaForm);
-        }
+        }).bind(this);
 
-        formEvent.on(["change"].concat(keys), this.onChanged.bind(this));
-        formEvent.on(["changed"].concat(keys).concat(["*"]), this.changeCurrentArray.bind(this));
-        formEvent.on(["changed"].concat(keys).concat(["*", "*"]), this.changeCurrentArray.bind(this));
+        formEvent.on(["change"].concat(keys), this.onChanged);
+        formEvent.on(["changed"].concat(keys).concat(["*"]), this.changeCurrentArray);
+        formEvent.on(["changed"].concat(keys).concat(["*", "*"]), this.changeCurrentArray);
 
         super.init();
     }
@@ -209,9 +209,9 @@ export class ArrayField extends BaseField<IProps, any>{
         const { formEvent, uiSchema, arrayIndex } = this.props;
         const keys = utils.mergeKeys({ uiSchema, arrayIndex });
 
-        formEvent.off(["change"].concat(keys).join("."), this.onChanged.bind(this));
-        formEvent.off(["changed"].concat(keys).concat(["*"]).join("."), this.changeCurrentArray.bind(this));
-        formEvent.off(["changed"].concat(keys).concat(["*", "*"]).join("."), this.changeCurrentArray.bind(this));
+        formEvent.off(["change"].concat(keys).join("."), this.onChanged);
+        formEvent.off(["changed"].concat(keys).concat(["*"]).join("."), this.changeCurrentArray);
+        formEvent.off(["changed"].concat(keys).concat(["*", "*"]).join("."), this.changeCurrentArray);
 
         super.dispose();
     }
