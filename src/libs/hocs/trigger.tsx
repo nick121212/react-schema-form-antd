@@ -27,7 +27,7 @@ export const TriggerHoc = (Component: any): React.ComponentClass<any> => {
             const keys = utils.mergeKeys({ uiSchema, arrayIndex });
             const { text = undefined } = this.state || {};
             let { prop = "", trigger = null, always = false } = uiSchema["ui:trigger"];
-            let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
+            let { path = "", idField = "", labelField = "", groupField = "" } = uiSchema["ui:data"] || {};
 
             if (always || (value != text && trigger)) {
                 this.timeId && clearTimeout(this.timeId);
@@ -44,7 +44,7 @@ export const TriggerHoc = (Component: any): React.ComponentClass<any> => {
                         // }
                         utils.setUiData(uiSchema, formData, keyBy(dataSource, idField));
                         formEvent.emit(["triggerEvent"].concat(keys), {
-                            dataSource: utils.getOptions(dataSource, idField, labelField),
+                            dataSource: utils.getOptions(dataSource, idField, labelField, groupField),
                             loading: false
                         });
                     });

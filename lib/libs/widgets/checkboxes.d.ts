@@ -6,7 +6,7 @@ export interface IProps extends ICommonChildProps {
 }
 export declare class CheckboxesWidget extends BaseWidget<IProps, any> {
     constructor(props: any, context: any);
-    setDefaultProps(): {} & {
+    setDefaultProps(): {
         [id: string]: any;
     };
     render(): JSX.Element;

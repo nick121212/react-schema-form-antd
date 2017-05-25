@@ -27,15 +27,20 @@ export class SelectWidget extends BaseWidget<IProps, any> {
 
         if (schema.type === "array") {
             props["mode"] = "multiple";
+
+
             if (defaultValue) {
-                props["defaultValue"] = defaultValue.map((d) => {
-                    return d.toString();
-                });
+                if (defaultValue.constructor === Array) {
+                    props["defaultValue"] = defaultValue.map((d) => {
+                        return d.toString();
+                    });
+                }
+
             }
-            if (value) {
+            if (value && value.constructor === Array) {
                 props["value"] = value.map((d) => {
                     return d.toString();
-                });;
+                });
             }
         } else {
             if (defaultValue) {
@@ -67,7 +72,11 @@ export class SelectWidget extends BaseWidget<IProps, any> {
         if ((uiSchema as IUiSchema).schema.type === "number") {
             value = ~~value;
         }
-
+        if ((uiSchema as IUiSchema).schema.type === "array" && (uiSchema as IUiSchema).schema.items.type === "number") {
+            value = value.map((d) => {
+                return ~~d;
+            });
+        }
         if (value === this.getFieldValue()) {
             return;
         }
@@ -90,6 +99,10 @@ export class SelectWidget extends BaseWidget<IProps, any> {
             titleMap = dataSource;
         }
 
+        // if (options.renderOptions) {
+        //     titleMap = options.renderOptions(titleMap);
+        // }
+
         return (
             <Select
                 disabled={(uiSchema as IUiSchema).readonly}
@@ -99,7 +112,7 @@ export class SelectWidget extends BaseWidget<IProps, any> {
                 {...select}
                 {...this.setDefaultProps() }>
                 {
-                    titleMap.map((val, i) => {
+                    options.renderOptions?options.renderOptions(titleMap):titleMap.map((val, i) => {
                         return <Select.Option value={val.value} key={val.value}>{val.label}</Select.Option>
                     })
                 }

@@ -70,6 +70,10 @@ export class AutoCompleteWidget extends BaseWidget<IProps, any> {
             titleMap = dataSource;
         }
 
+        if (options.renderOptions) {
+            titleMap = options.renderOptions(titleMap);
+        }
+
         return (
             <AutoComplete
                 className="global-search"

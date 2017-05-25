@@ -6,9 +6,9 @@ export interface IProps extends ICommonChildProps {
 }
 export declare class TreeWidget extends BaseWidget<IProps, any> {
     constructor(props: any, context: any);
-    setDefaultProps(): {} & {
+    setDefaultProps(): {
         [id: string]: any;
-    } & {};
+    };
     onLoadData(treeNode: any): any;
     loop(data: any): void;
     render(): JSX.Element;

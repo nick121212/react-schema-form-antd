@@ -31,7 +31,7 @@ export declare class Utils {
         keys: any;
         validateResult: any;
     }): any;
-    getOptions(data: Array<any>, idField: any, labelField: any): any[];
+    getOptions(data: Array<any>, idField: any, labelField: any, groupField: any): any[];
     setUiData(uiSchema: any, formData: any, data: any): void;
     getUiData(uiSchema: any, formData: any): any[];
 }

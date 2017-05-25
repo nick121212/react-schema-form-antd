@@ -23,14 +23,6 @@ export class Utils {
             console.log(uiSchema, "找不到Field");
         }
 
-        // if (!hoc) {
-        //     hoc = {
-        //         hoc: (Component, fn) => {
-        //             return Component;
-        //         },
-        //         params: {}
-        //     };
-        // }
         if (FieldTemp) {
             FieldTemp = TriggerHoc(FieldTemp);
             FieldTemp = TempHoc(FieldTemp);
@@ -175,7 +167,7 @@ export class Utils {
      * @param idField    id的字段
      * @param labelField label的字段
      */
-    getOptions(data: Array<any>, idField, labelField) {
+    getOptions(data: Array<any>, idField, labelField, groupField) {
         // let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
 
         if (!idField) {
@@ -189,7 +181,8 @@ export class Utils {
                 label: text,
                 name: text,
                 text: text,
-                value: d[idField].toString()
+                value: d[idField].toString(),
+                group: d[groupField]?d[groupField].toString():""
             };
         });
     }
@@ -221,7 +214,7 @@ export class Utils {
      * @param formData 表单的数据项
      */
     getUiData(uiSchema, formData) {
-        let { path = "", idField = "", labelField = "" } = uiSchema["ui:data"] || {};
+        let { path = "", idField = "", labelField = "", groupField = "" } = uiSchema["ui:data"] || {};
         let currentData = {};
 
         if (!path || !idField) {
@@ -234,11 +227,11 @@ export class Utils {
 
         let data = map(currentData, (d, key) => {
             return Object.assign({}, d, {
-                [idField]: key
+                [idField]: d[idField] || key
             });
         });
 
-        return this.getOptions(data, idField, labelField);
+        return this.getOptions(data, idField, labelField, groupField);
     }
 
 }
