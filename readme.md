@@ -1,5 +1,7 @@
 # REACT-SCHEMA-FORM-ANTD
 
+此库不在维护：请移步到新的库：(点这里)[https://nick121212.github.io/fx-schema-form/packages/fx-schema-form-antd/out/index.html#/]
+
 使用react和antd自动生成表单
 #
 ## Demo Time
